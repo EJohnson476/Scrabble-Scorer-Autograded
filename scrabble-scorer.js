@@ -48,8 +48,6 @@ let simpleScorer = function (word)
    return score;
 };
 
-//console.log(simpleScorer("hello"));
-
 let vowelBonusScorer = function (word)
 {
    word = word.toLowerCase();
@@ -79,41 +77,27 @@ let vowelBonusScorer = function (word)
    return score;
 };
 
-//console.log(vowelBonusScorer("hello"));
-
-
 let oldObject = 
 {
    name : "Scrabbel ",
    description : "The traditional scoring algorithim. ",
-   //scorerFunction : oldScrabbleScorer()
+   scorerFunction : oldScrabbleScorer
 };
 
-//console.log(oldObject.name);
 
 let simpleObject = 
 {
    name : "Simple score ",
    description : "Each letter is worth 1 point. ",
-   //scorerFunction : simpleScorer()
+   scorerFunction : simpleScorer
 };
 
 let vowelObject = 
 {
    name : "Bonus vowels ",
    description : "Vowels are worth 3 pts,\nconstants are worth 1 pt.",
-   //scorerFunction : vowelBonusScorer()
+   scorerFunction : vowelBonusScorer
 };
-
-oldObject.scorerFunction = oldScrabbleScorer;
-
-simpleObject.scorerFunction = simpleScorer;
-
-vowelObject.scorerFunction = vowelBonusScorer;
-
-let scrabbleScorer;
-
-const scoringAlgorithms = [simpleObject, vowelObject, oldObject];
 
 function scorerPrompt(objectArr) 
 {
@@ -131,24 +115,53 @@ function scorerPrompt(objectArr)
    {
       object = objectArr[2];
    }
-   /*
-   else
-   {
-      input.question("Please enter a valid input of: 0, 1, or 2 ");
-      return scorerPrompt(objectArr);
-   }
-   */
    return object;
 }
 
-//console.log(scorerPrompt(scoringAlgorithms));
 
 
+let newPointStructure = {};
 
 
-function transform() {};
+function transform(object) 
+{
+   let newObject = {};
+   for(let key in object)
+   {
+      for(let i = 0; i < object[key].length; i++)
+      {
+        let letter = object[key][i].toLowerCase();
+        let value = Number(key);
+        newObject[`${letter}`] = value;
+      }
+   }
+   return newObject;
+};
 
-let newPointStructure;
+newPointStructure = transform(oldPointStructure);
+
+let scrabbleScorer = function(word)
+{
+   let object = newPointStructure;
+   word = word.toLowerCase().split('');
+   let points = 0
+
+   for(let i = 0; i < word.length; i++)
+   {
+      for(let key in object)
+      {
+         if(key === word[i])
+         {
+            points = points + Number(object[key]);
+         }
+      }
+   }
+   return points;
+};
+
+newPointStructure.scorerFunction = scrabbleScorer;
+
+const scoringAlgorithms = [simpleObject, vowelObject, newPointStructure];
 
 function runProgram() {
    let word = initialPrompt();
